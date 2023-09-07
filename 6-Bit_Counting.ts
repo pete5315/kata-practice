@@ -11,7 +11,7 @@ export function countBits(n: number): number {
   while(n>0) {
     if (n%2===1) {
       count++;
-      n=n-1;
+      n--;
     }
     n=n/2;
   }

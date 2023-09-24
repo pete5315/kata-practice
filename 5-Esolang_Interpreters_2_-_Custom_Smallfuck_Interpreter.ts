@@ -40,5 +40,66 @@
 
 
 export function interpreter(code: string, tape: string): string {
-  // Implement your interpreter here
+  let pointer = 0;
+  let commandArray = code.split("");
+  let tapeArray = tape.split("");
+  for (let i = 0; i < commandArray.length; i++) {
+    switch (commandArray[i]) {
+      case ">":
+        pointer++;
+        console.log(pointer, tapeArray.length);
+        if (pointer < 0 || pointer >= tapeArray.length) {
+          return tapeArray.join("");
+        }
+        break;
+      case "*":
+        tapeArray[pointer] = flip(tapeArray[pointer]);
+        break
+      case "<":
+        pointer--;
+        if (pointer < 0 || pointer >= tapeArray.length) {
+          return tapeArray.join("");
+        }
+        break;
+      case "[":
+        if (tapeArray[pointer] === "0") {
+          i = findMatching(commandArray, i + 1, true)
+        }// - Jump past matching ] if value at current cell is 0
+      case "]":
+        if (tapeArray[pointer] === "1") {
+          i = findMatching(commandArray, i + 1, false)
+        }//- Jump back to matching [ (if value at current cell is nonzero)
+    }
+  }
+  return tapeArray.join("")
+
+}
+
+function findMatching(commandArray: string[], i: number, bool: boolean): number {
+  if (bool === true) {
+    while (commandArray[i] !== "]") {
+      i++;
+      switch (commandArray[i]) {
+        case "[":
+          return findMatching(commandArray, i, bool)
+        case "]":
+          return i
+      }
+    }
+  } else {
+    while (commandArray[i] !== "[") {
+      i--;
+      switch (commandArray[i]) {
+        case "[":
+          return i
+        case "]":
+          return findMatching(commandArray, i, bool)
+      }
+    }
+  }
+  return i;
+}
+
+function flip(str: string): string {
+  return str === "0" ? "1" : "0";
 }
